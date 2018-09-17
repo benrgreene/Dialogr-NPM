@@ -29,7 +29,10 @@ dialogr(galleryImages, {
 });
 ```
 
-This instantiates a lightbox, with gallery mode enabled, for all images with the class `.gallery-image`;
+This instantiates a lightbox, with gallery mode enabled, for all images with the class `.gallery-image`. It's also possible to add captions to images displayed in the lightbox, there are two way to do it:
+
+1. Add the `data-dialogr-caption` attribute to the image that gets passed into dialogr
+2. If the image is part of a figure and has a figcaption as a sibling, the figcaption's text will be pulled into the dialog.
 
 Here's an example of an HTML type lightbox:
 

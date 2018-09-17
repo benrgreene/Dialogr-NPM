@@ -8,7 +8,7 @@ module.exports = {
         <div id="js-dialog-previous" class="dialog-previous">&larr;</div>
         <div id="js-dialog-next" class="dialog-next">&rarr;</div>
       </dialog>
-      <style>dialog{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;border:0;padding:20px;max-height:90vh;max-width:90vw;overflow:hidden}dialog::backdrop{background-color:rgba(10,10,10,.8)}.dialog-close{content:'X';position:absolute;top:5px;right:5px;cursor:pointer}.dialog-next,.dialog-previous{position:absolute;top:50%;width:20px;transform:translateY(-50%);text-align:center;cursor:pointer}.dialog-previous{left:0}.dialog-next{right:0}.dialog-content{text-align:center}.dialog-content[data-current-gallery-index=false]~.dialog-next,.dialog-content[data-current-gallery-index=false]~.dialog-previous{display:none}.dialog-content img{display:block;max-width:100%;max-height:100%;object-fit:scale-down}</style>`;
+      <style>dialog{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);margin:0;border:0;padding:20px;max-height:90vh;max-width:90vw;overflow:hidden}dialog::backdrop{background-color:rgba(10,10,10,.8)}dialog figure{margin: 0;}.dialog-close{content:'X';position:absolute;top:5px;right:5px;cursor:pointer}.dialog-next,.dialog-previous{position:absolute;top:50%;width:20px;transform:translateY(-50%);text-align:center;cursor:pointer}.dialog-previous{left:0}.dialog-next{right:0}.dialog-content{text-align:center}.dialog-content[data-current-gallery-index=false]~.dialog-next,.dialog-content[data-current-gallery-index=false]~.dialog-previous{display:none}.dialog-content img{display:block;max-width:100%;max-height:100%;object-fit:scale-down}</style>`;
     
     // Now that the dialog is there, we can make our declarations
     this.dialog = document.querySelector('#js-dialog');
@@ -74,7 +74,8 @@ module.exports = {
   // Add the image to the dialog element
   displayImage: function(element) {
     let currentGalleryIndex = '';
-    let imageSrc = element.src;
+    let imageCaption        = false;
+    let imageSrc            = element.src;
     // Allow for image type triggers on non-image elements
     if(element.dataset.dialogrSrc) {
       imageSrc = element.dataset.dialogrSrc;
@@ -83,7 +84,21 @@ module.exports = {
     if(element.dataset.dialogrIndex) {
       this.dialogContent.dataset.currentGalleryIndex = element.dataset.dialogrIndex;
     }
-    this.dialogContent.innerHTML = '<img src="' + imageSrc + '" ' + currentGalleryIndex + ' />';
+    // Check if there is a caption for the image
+    if (element.dataset.dialogrCaption) {
+      imageCaption = element.dataset.dialogrCaption;
+    } else if ('FIGURE' == element.parentElement.tagName) {
+      let allChildren = Array.from(element.parentElement.children);
+      imageCaption = allChildren.reduce((figCaption, currentElement) => {
+        return ('FIGCAPTION' == currentElement.tagName) ? currentElement.innerHTML : figCaption;
+      }, false);
+    }
+    // Set the dialog content
+    if (false !== imageCaption) {
+      this.dialogContent.innerHTML = `<figure><img src="${imageSrc}" ${currentGalleryIndex} /><figcaption>${imageCaption}</figcaption></figure>`;
+    } else {
+      this.dialogContent.innerHTML = `<img src="${imageSrc}" ${currentGalleryIndex} />`;
+    }
     this.setImageMaxDim();
   },
   displayHTMLContent: function(content) {
@@ -134,17 +149,20 @@ module.exports = {
       }
     });
   },
+  // set the max height of the image so it doesn't overflow off the dialog.
+  // should include modal padding & caption height
   setImageMaxDim: function() {
-    var dialogImage = document.querySelector('.dialog-content img');
+    var dialogImage   = document.querySelector('.dialog-content img');
+    var dialogCaption = document.querySelector('.dialog-content figcaption');
+    let captionHeight = (dialogCaption) ? dialogCaption.clientHeight : 0;
     if(dialogImage) {
       dialogImage.style.maxHeight = '';
-      // TODO: this should be dynamic
       var padding = this.dialog.style.paddingTop;
       padding = 40;
       if(this.dialog.clientHeight > 40) {
-        dialogImage.style.maxHeight = (this.dialog.clientHeight - padding) + 'px';
+        dialogImage.style.maxHeight = (this.dialog.clientHeight - padding - captionHeight) + 'px';
       } else {
-        dialogImage.style.maxHeight = (window.innerHeight - (2 * padding)) + 'px';
+        dialogImage.style.maxHeight = (window.innerHeight - (2 * padding) - captionHeight) + 'px';
       }
     }
   },
