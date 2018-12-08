@@ -6,7 +6,16 @@ This is a lightbox/modal library that uses only plain ol' JavaScript and native 
 
 ## How To Use
 
-Using is super easy. There are only two things you need when calling dialogr:
+Using is super easy. There are two steps to using dialogr, first you need to require and set it up:
+
+```
+const Dialogr = require('dialogr');
+Dialogr.setup();
+```
+
+That gets the styles and all that good stuff in your page. 
+
+Next, there are only two things you need when calling dialogr:
 
 * The elements that will trigger the modal
 * An options object.
@@ -23,7 +32,7 @@ Here's an example:
 
 ```
 let galleryImages = document.querySelectorAll('.gallery-image');
-dialogr(galleryImages, {
+Dialogr.dialogr(galleryImages, {
   gallery: true,
   type: 'image',
 });
