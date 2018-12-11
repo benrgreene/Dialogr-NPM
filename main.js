@@ -64,7 +64,7 @@ module.exports = {
   },
   // Will check whether or not a click event was on the element proper, or outside it (on, say, a pseudo element)
   checkClickInsideBoundingBox: function(event, element) {
-    elementPos = element.getBoundingClientRect();
+    let elementPos = element.getBoundingClientRect();
     if(elementPos.left <= event.clientX && elementPos.right >= event.clientX &&
        elementPos.top <= event.clientY && elementPos.bottom >= event.clientY) {
       return true; 
