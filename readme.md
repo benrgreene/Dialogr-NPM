@@ -20,6 +20,8 @@ Next, there are only two things you need when calling dialogr:
 * The elements that will trigger the modal
 * An options object.
 
+Note: when adding a trigger, there are two functions you can call. The old function was `Dialogr.dialogr(...)`, however **there is a new alias that should be used:** `Dialogr.addTrigger(...)`.
+
 There are only a couple options: 
 
 * gallery
@@ -33,7 +35,7 @@ Here's an example:
 
 ```
 let galleryImages = document.querySelectorAll('.gallery-image');
-Dialogr.dialogr(galleryImages, {
+Dialogr.addTrigger(galleryImages, {
   gallery: true,
   type: 'image',
 });
@@ -43,9 +45,17 @@ Here's an example of an HTML type lightbox:
 
 ```
 let htmlDialogTrigger = document.querySelectorAll('.js-trigger-dialog');
-dialogr(htmlDialogTrigger, {
+Dialogr.addTrigger(htmlDialogTrigger, {
   content: `<p>This is some HTML content!</p>
     <p>Warm fuzzy feelings</p>`,
+});
+```
+
+It's possible to open a modal without adding any triggers to it - simply pass the boolean `false` in place of an array of triggers and it will immediately open:
+
+```
+Dialogr.addTrigger(false, {
+  content: `<p>This is some HTML content that's opened automatically!</p>`,
 });
 ```
 

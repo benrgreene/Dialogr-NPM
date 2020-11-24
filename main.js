@@ -42,7 +42,7 @@ module.exports = {
     this.dialog.addEventListener('click', function(e) {
       const isInside = self.checkClickInsideBoundingBox(e, self.dialog);
       if(!isInside) {
-        self.dialog.close();    
+        self.dialog.close();
       }
     });
     // Add arrow key navigation to the dialogs
@@ -59,6 +59,8 @@ module.exports = {
         self.viewNextSlide(e, 1);
       } else if( 37 == char ) {
         self.viewNextSlide(e, -1);
+      } else if( 27 == char ) {
+        self.dialog.close();
       }
     });
   },
@@ -105,6 +107,9 @@ module.exports = {
     this.dialogContent.dataset.currentGalleryIndex = false;
     this.dialogContent.innerHTML = content;
   },
+  addTrigger: function(elements, options) {
+    this.dialogr(elements, options);
+  },
   // Init the dialog element and setup gallery info/data attributes
   dialogr: function(elements, options) {
     // Default is html & no gallery - doesn't allow gallery with HTML content, only with images.
@@ -127,7 +132,14 @@ module.exports = {
     }
 
     let self = this;
-    elements.forEach(function(e) {
+
+    // auto open if there are no elements to bind to
+    if (elements === false) {
+      self.dialog.showModal();
+      self.displayHTMLContent(options.content);
+    }
+    
+    elements && elements.forEach(function(e) {
       if(inGallery) {
         e.dataset.dialogrIndex = self.maxSlides;
         self.maxSlides++;
